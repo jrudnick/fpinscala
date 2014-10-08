@@ -36,7 +36,24 @@ object MyModule {
 
   // Exercise 1: Write a function to compute the nth fibonacci number
 
-  def fib(n: Int): Int = ???
+  def fib(n: Int): Int = {
+    @annotation.tailrec
+    def fibicate(n: Int, previous: Int, current: Int): Int = {
+      n match {
+        case 0 => previous
+        case _ => fibicate(n - 1, current, previous + current)
+      }
+    }
+    fibicate(n, 0, 1)
+
+    //def fibicate(n: Int): Int = {
+      //if (n == 0) 0
+      //else if (n == 1) 1
+      //else fibicate(n - 1) + fibicate(n - 2)
+    //}
+
+    //fibicate(n)
+  }
 
   // This definition and `formatAbs` are very similar..
   private def formatFactorial(n: Int) = {
@@ -61,6 +78,7 @@ object FormatAbsAndFactorial {
   def main(args: Array[String]): Unit = {
     println(formatResult("absolute value", -42, abs))
     println(formatResult("factorial", 7, factorial))
+    for ( i <- 0 until 7 ) println(formatResult("fib", i, fib))
   }
 }
 
@@ -129,7 +147,25 @@ object PolymorphicFunctions {
 
   // Exercise 2: Implement a polymorphic function to check whether
   // an `Array[A]` is sorted
-  def isSorted[A](as: Array[A], gt: (A,A) => Boolean): Boolean = ???
+  def isSorted[A](as: Array[A], gt: (A,A) => Boolean): Boolean = {
+    def test(n: Int, prev: Boolean): Boolean = {
+      if (!prev) false
+      else if (n == 0) prev
+      else test(n - 1, gt(as(n), as(n-1))) // TODO first false should be good enough to break...
+    }
+
+    test(as.length - 1, true)
+  }
+
+  def main(args: Array[String]): Unit = {
+    //val sorted = Array(1, 2, 3)
+    //val notSorted = Array(1, 3, 2)
+    val sorted = Array(1, 3, 5, 7)
+    val notSorted = Array(1, 3, 2, 4)
+    println("sorted integers: " + isSorted(sorted, (a: Int, b: Int) => a > b))
+    println("not-sorted integers: " + isSorted(notSorted, (a: Int, b: Int) => a > b))
+  }
+
 
   // Polymorphic functions are often so constrained by their type
   // that they only have one implementation! Here's an example:
