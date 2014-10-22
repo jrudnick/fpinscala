@@ -100,7 +100,17 @@ object List { // `List` companion object. Contains functions for creating and wo
   def appendRight[A](a1: List[A], a2: List[A]): List[A] =
     foldRight(a1, a2)((x, acc) => Cons(x, acc))
 
-  def map[A,B](l: List[A])(f: A => B): List[B] = sys.error("todo")
+  def addOne(xs: List[Int]): List[Int] =
+    foldRight(xs, List[Int]())((x, acc) => Cons(x + 1, acc))
+    //List.reverse(foldLeft(xs, List[Int]())((acc, a) => Cons(a + 1, acc)))
+
+  def toStrings(xs: List[Double]): List[String] =
+    foldRight(xs, List[String]())((x, acc) => Cons(s"[...${x.toString}...]", acc))
+
+  def map[A,B](l: List[A])(f: A => B): List[B] =
+    foldRight(l, List[B]())((x, acc) => Cons(f(x), acc))
+
+  def filter[A](as: List[A])(f: A => Boolean): List[A] = ???
 }
 object Lists {
 
@@ -108,7 +118,7 @@ object Lists {
     val ls = Cons(1, Cons(2, Cons(3, Cons(4, Nil))))
     val xs = Cons(5, Cons(6, Cons(7, Cons(8, Nil))))
     val lsDoubles = Cons(1.0, Cons(2.0, Cons(3.0, Cons(4.0, Nil))))
-    //val lsDoubles = List.map(ls){a: Int => a.toDouble}
+    val mappedDoubles = List.map(ls){a: Int => a.toDouble}
     println(s"tail: ${List.tail(ls)}")
     println(s"setHead: ${List.setHead(ls, 0)}")
     println(s"drop: ${List.drop(ls, 2)}")
@@ -125,5 +135,8 @@ object Lists {
     println(s"reverse: ${List.reverse(ls)}")
     println(s"append: ${List.append(ls, xs)}")
     println(s"appendLeft: ${List.appendRight(ls, xs)}")
+    println(s"addOne: ${List.addOne(ls)}")
+    println(s"toStrings: ${List.toStrings(lsDoubles)}")
+    println(s"mapped: $mappedDoubles")
   }
 }
