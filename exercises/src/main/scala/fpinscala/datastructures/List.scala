@@ -110,7 +110,31 @@ object List { // `List` companion object. Contains functions for creating and wo
   def map[A,B](l: List[A])(f: A => B): List[B] =
     foldRight(l, List[B]())((x, acc) => Cons(f(x), acc))
 
-  def filter[A](as: List[A])(f: A => Boolean): List[A] = ???
+  def filter[A](as: List[A])(f: A => Boolean): List[A] =
+    foldRight(as, List[A]())((x, acc) => if (f(x)) Cons(x, acc) else acc)
+
+  def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] =
+    foldRight(as, List[B]())((x, acc) => List.append(f(x), acc))
+
+  def filterWithFMap[A](as: List[A])(f: A => Boolean): List[A] =
+    flatMap(as) {
+      case a if(f(a)) => Cons(a, Nil)
+      case _ => Nil
+    }
+
+  def zipAppend[A](a1: List[Int], a2: List[Int]): List[Int] = (a1, a2) match {
+    case (Nil, _) => Nil
+    case (_, Nil) => Nil
+    case (Cons(head1, tail1), Cons(head2, tail2)) => Cons(head1 + head2, zipAppend(tail1, tail2))
+  }
+
+
+  def zipWith[A](a1: List[A], a2: List[A])(f: (A, A) => A): List[A] = (a1, a2) match {
+    case (Nil, _) => Nil
+    case (_, Nil) => Nil
+    case (Cons(head1, tail1), Cons(head2, tail2)) => Cons(f(head1, head2), zipWith(tail1, tail2)(f))
+  }
+
 }
 object Lists {
 
@@ -138,5 +162,15 @@ object Lists {
     println(s"addOne: ${List.addOne(ls)}")
     println(s"toStrings: ${List.toStrings(lsDoubles)}")
     println(s"mapped: $mappedDoubles")
+    val filtered = List.filter(ls) { _ % 2 == 0 }
+    println(s"filter: $filtered")
+    val fmapped = List.flatMap(ls) { x => List(x, x) }
+    println(s"flatMap: $fmapped")
+    val filterWithFM = List.filterWithFMap(ls) { _ % 2 == 0 }
+    println(s"filter with flat map: $filterWithFM ")
+    val za = List.zipAppend(ls,xs)
+    println(s"zipAppend: $za")
+    val za2 = List.zipWith(ls, xs) { (a, b) => a + b }
+    println(s"zipWith: $za2 ")
   }
 }
