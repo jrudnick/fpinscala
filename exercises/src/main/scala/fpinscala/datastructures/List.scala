@@ -135,6 +135,17 @@ object List { // `List` companion object. Contains functions for creating and wo
     case (Cons(head1, tail1), Cons(head2, tail2)) => Cons(f(head1, head2), zipWith(tail1, tail2)(f))
   }
 
+  def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = {
+    def go(sup: List[A], sub: List[A], cur: Boolean): Boolean = (sup, sub, cur) match {
+      case (_, Nil, c) => c
+      case (Nil, _, _) => false
+      case (Cons(head1, tail1), Cons(head2, tail2), _) =>
+        if (head1 == head2) go(tail1, tail2, true)
+        else go(tail1, sub, false)
+    }
+
+    go(sup, sub, false)
+  }
 }
 object Lists {
 
@@ -172,5 +183,11 @@ object Lists {
     println(s"zipAppend: $za")
     val za2 = List.zipWith(ls, xs) { (a, b) => a + b }
     println(s"zipWith: $za2 ")
+    val subs = List.hasSubsequence(ls, Cons(2, Cons(3, Nil)))
+    val subs2 = List.hasSubsequence(ls, Cons(4, Nil))
+    val subs3 = List.hasSubsequence(ls, Cons(7, Nil))
+    println(s"hasSub: $subs")
+    println(s"hasSub2: $subs2")
+    println(s"hasSub3: $subs3")
   }
 }
